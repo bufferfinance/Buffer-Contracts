@@ -142,8 +142,8 @@ interface IBufferOptionsV5 {
 }
 
 
-interface IVNFTReceiver {
-    function onVNFTReceived(
+interface INFTReceiver {
+    function onNFTReceived(
         address operator,
         address from,
         uint256 tokenId,

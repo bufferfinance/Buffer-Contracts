@@ -262,10 +262,10 @@ abstract contract BufferNFTCore is
     }
 
     /**
-     * @notice Transfer part of units of a Voucher to target address.
-     * @param from_ Address of the Voucher sender
-     * @param to_ Address of the Voucher recipient
-     * @param optionID Id of the Voucher to transfer
+     * @notice Transfer part of units of a nft to target address.
+     * @param from_ Address of the nft sender
+     * @param to_ Address of the nft recipient
+     * @param optionID Id of the nft to transfer
      * @param transferUnits_ Amount of units to transfer
      */
     function transferFrom(
@@ -305,11 +305,11 @@ abstract contract BufferNFTCore is
     }
 
     /**
-     * @notice Transfer part of units of a Voucher to another Voucher.
-     * @param from_ Address of the Voucher sender
-     * @param to_ Address of the Voucher recipient
-     * @param optionID Id of the Voucher to transfer
-     * @param targetOptionID Id of the Voucher to receive
+     * @notice Transfer part of units of a nft to another nft.
+     * @param from_ Address of the nft sender
+     * @param to_ Address of the nft recipient
+     * @param optionID Id of the nft to transfer
+     * @param targetOptionID Id of the nft to receive
      * @param transferUnits_ Amount of units to transfer
      */
     function transferFrom(
@@ -372,14 +372,14 @@ abstract contract BufferNFTCore is
             transferUnits_
         );
         require(
-            _checkOnVNFTReceived(
+            _checkOnNFTReceived(
                 from_,
                 to_,
                 targetTokenId_,
                 transferUnits_,
                 data_
             ),
-            "to non VNFTReceiver implementer"
+            "to non NFTReceiver implementer"
         );
     }
 
@@ -392,8 +392,8 @@ abstract contract BufferNFTCore is
     ) public virtual returns (uint256 newTokenId) {
         newTokenId = transferFrom(from_, to_, tokenId_, transferUnits_);
         require(
-            _checkOnVNFTReceived(from_, to_, newTokenId, transferUnits_, data_),
-            "to non VNFTReceiver"
+            _checkOnNFTReceived(from_, to_, newTokenId, transferUnits_, data_),
+            "to non NFTReceiver"
         );
         return newTokenId;
     }
@@ -408,14 +408,14 @@ abstract contract BufferNFTCore is
     ) public virtual {
         transferFrom(from_, to_, tokenId_, targetTokenId_, transferUnits_);
         require(
-            _checkOnVNFTReceived(
+            _checkOnNFTReceived(
                 from_,
                 to_,
                 targetTokenId_,
                 transferUnits_,
                 data_
             ),
-            "to non VNFTReceiver"
+            "to non NFTReceiver"
         );
     }
 
@@ -643,7 +643,7 @@ abstract contract BufferNFTCore is
         return super.tokenURI(tokenId);
     }
 
-    function _checkOnVNFTReceived(
+    function _checkOnNFTReceived(
         address from_,
         address to_,
         uint256 tokenId_,
@@ -655,18 +655,18 @@ abstract contract BufferNFTCore is
         }
         bytes memory returndata = to_.functionCall(
             abi.encodeWithSelector(
-                IVNFTReceiver(to_).onVNFTReceived.selector,
+                INFTReceiver(to_).onNFTReceived.selector,
                 _msgSender(),
                 from_,
                 tokenId_,
                 units_,
                 _data
             ),
-            "non VNFTReceiver implementer"
+            "non NFTReceiver implementer"
         );
         bytes4 retval = abi.decode(returndata, (bytes4));
-        /*b382cdcd  =>  onVNFTReceived(address,address,uint256,uint256,bytes)*/
-        return (retval == type(IVNFTReceiver).interfaceId);
+        /*b382cdcd  =>  onNFTReceived(address,address,uint256,uint256,bytes)*/
+        return (retval == type(INFTReceiver).interfaceId);
     }
 
 }
