@@ -271,7 +271,7 @@ contract BufferIBFRPoolV5 is
      * @nonce calls by BufferCallOptions to lock the funds
      * @param tokenXAmount Amount of funds that should be locked in an option
      */
-    function change_lock(
+    function lockChange(
         uint256 id,
         uint256 tokenXAmount,
         uint256 premium

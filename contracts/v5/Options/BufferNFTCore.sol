@@ -127,7 +127,7 @@ abstract contract BufferNFTCore is
                 option.amount - newAmount,
                 option.premium - newPremium
             );
-            pool.change_lock(optionID, option.lockedAmount, option.premium);
+            pool.lockChange(optionID, option.lockedAmount, option.premium);
             approve_token(address(pool), newOption.premium);
             pool.lock(newOptionID, newOption.lockedAmount, newOption.premium);
         }
@@ -178,7 +178,7 @@ abstract contract BufferNFTCore is
             totalAmount,
             totalPremium
         );
-        pool.change_lock(targetOptionID, totalLockedAmount, totalPremium);
+        pool.lockChange(targetOptionID, totalLockedAmount, totalPremium);
     }
 
     function _merge(uint256 optionId_, uint256 targetOptionId_)
@@ -296,7 +296,7 @@ abstract contract BufferNFTCore is
             option.amount - newAmount,
             option.premium - newPremium
         );
-        pool.change_lock(optionID, option.lockedAmount, option.premium);
+        pool.lockChange(optionID, option.lockedAmount, option.premium);
         approve_token(address(pool), newPremium);
         pool.lock(newOptionID, newLockedAmount, newPremium);
         _transferUnitsFrom(from_, to_, optionID, newOptionID, transferUnits_);
@@ -339,8 +339,8 @@ abstract contract BufferNFTCore is
             option.amount - newAmount,
             option.premium - newPremium
         );
-        pool.change_lock(optionID, option.lockedAmount, option.premium);
-        pool.change_lock(
+        pool.lockChange(optionID, option.lockedAmount, option.premium);
+        pool.lockChange(
             targetOptionID,
             targetOption.lockedAmount,
             targetOption.premium
