@@ -215,31 +215,6 @@ class OptionERC3525Testing(object):
                 [unit_1, unit_2], unit_2, {"from": self.option_holder}
             )
 
-        # self.chain.snapshot()
-
-        # new_option_holder = self.referrer
-        # new_option_id = self.verify_creation(new_option_holder)
-
-        # with brownie.reverts("slot mismatch"):
-        #     self.tokenX_options.merge(
-        #         [unit_1, unit_2], new_option_id, {"from": self.option_holder}
-        #     )
-        # with brownie.reverts("slot mismatch"):
-        #     self.tokenX_options.merge(
-        #         [unit_1, new_option_id], unit_3, {"from": self.option_holder}
-        #     )
-
-        # self.tokenX_options.approve(
-        #     self.user_2, self.option_id, 100000, {"from": self.option_holder}
-        # ).return_value
-
-        # merged_unit = self.tokenX_options.merge(
-        #     [unit_1, unit_2], unit_3, {"from": self.user_2}
-        # ).return_value
-
-        # assert merged_unit, "Split function failed"
-
-        # self.chain.revert()
         former_target_option_detail = self.tokenX_options.options(unit_3)
         total_amount = former_target_option_detail[2]
         total_locked_amount = former_target_option_detail[3]

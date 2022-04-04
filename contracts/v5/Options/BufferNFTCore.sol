@@ -33,6 +33,8 @@ abstract contract BufferNFTCore is
     ERC721URIStorage
 {
     using EnumerableSet for EnumerableSet.UintSet;
+    using Address for address;
+
 
     /// @dev optionId => units
     mapping(uint256 => uint256) public units;
@@ -354,6 +356,70 @@ abstract contract BufferNFTCore is
         );
     }
 
+    function _safeTransferUnitsFrom(
+        address from_,
+        address to_,
+        uint256 tokenId_,
+        uint256 targetTokenId_,
+        uint256 transferUnits_,
+        bytes memory data_
+    ) internal virtual {
+        _transferUnitsFrom(
+            from_,
+            to_,
+            tokenId_,
+            targetTokenId_,
+            transferUnits_
+        );
+        require(
+            _checkOnVNFTReceived(
+                from_,
+                to_,
+                targetTokenId_,
+                transferUnits_,
+                data_
+            ),
+            "to non VNFTReceiver implementer"
+        );
+    }
+
+    function safeTransferFrom(
+        address from_,
+        address to_,
+        uint256 tokenId_,
+        uint256 transferUnits_,
+        bytes memory data_
+    ) public virtual returns (uint256 newTokenId) {
+        newTokenId = transferFrom(from_, to_, tokenId_, transferUnits_);
+        require(
+            _checkOnVNFTReceived(from_, to_, newTokenId, transferUnits_, data_),
+            "to non VNFTReceiver"
+        );
+        return newTokenId;
+    }
+
+    function safeTransferFrom(
+        address from_,
+        address to_,
+        uint256 tokenId_,
+        uint256 targetTokenId_,
+        uint256 transferUnits_,
+        bytes memory data_
+    ) public virtual {
+        transferFrom(from_, to_, tokenId_, targetTokenId_, transferUnits_);
+        require(
+            _checkOnVNFTReceived(
+                from_,
+                to_,
+                targetTokenId_,
+                transferUnits_,
+                data_
+            ),
+            "to non VNFTReceiver"
+        );
+    }
+
+
     function getSlotDetail(uint256 slot_)
         internal
         view
@@ -576,4 +642,31 @@ abstract contract BufferNFTCore is
     {
         return super.tokenURI(tokenId);
     }
+
+    function _checkOnVNFTReceived(
+        address from_,
+        address to_,
+        uint256 tokenId_,
+        uint256 units_,
+        bytes memory _data
+    ) internal returns (bool) {
+        if (!to_.isContract()) {
+            return true;
+        }
+        bytes memory returndata = to_.functionCall(
+            abi.encodeWithSelector(
+                IVNFTReceiver(to_).onVNFTReceived.selector,
+                _msgSender(),
+                from_,
+                tokenId_,
+                units_,
+                _data
+            ),
+            "non VNFTReceiver implementer"
+        );
+        bytes4 retval = abi.decode(returndata, (bytes4));
+        /*b382cdcd  =>  onVNFTReceived(address,address,uint256,uint256,bytes)*/
+        return (retval == type(IVNFTReceiver).interfaceId);
+    }
+
 }

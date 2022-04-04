@@ -141,6 +141,17 @@ interface IBufferOptionsV5 {
     }
 }
 
+
+interface IVNFTReceiver {
+    function onVNFTReceived(
+        address operator,
+        address from,
+        uint256 tokenId,
+        uint256 units,
+        bytes calldata data
+    ) external returns (bytes4);
+}
+
 interface IOptionsConfig {
     enum PermittedTradingType {
         All,
